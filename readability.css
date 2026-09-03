@@ -1,0 +1,151 @@
+/* Readability layer for translucent websites. */
+
+:root {
+  --tzr-s: #384354 !important;
+  --tzr-m: #536074 !important;
+  --tzr-h: rgb(255 255 255 / 0.62) !important;
+  --tzr-g: rgb(255 255 255 / 0.78) !important;
+  --tzr-gs: rgb(255 255 255 / 0.94) !important;
+  --tzr-b: rgb(20 28 40 / 0.18) !important;
+
+  /* Common design-system names used by GitHub, YouTube, Atlassian, etc. */
+  --color-fg-muted: var(--tzr-s) !important;
+  --fgColor-muted: var(--tzr-s) !important;
+  --color-text-secondary: var(--tzr-s) !important;
+  --text-secondary: var(--tzr-s) !important;
+  --text-muted: var(--tzr-m) !important;
+  --muted-foreground: var(--tzr-m) !important;
+  --yt-spec-text-secondary: var(--tzr-s) !important;
+  --ds-text-subtle: var(--tzr-s) !important;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --tzr-s: #d7dde8 !important;
+    --tzr-m: #b5c0d1 !important;
+    --tzr-h: rgb(0 0 0 / 0.72) !important;
+    --tzr-g: rgb(12 16 23 / 0.78) !important;
+    --tzr-gs: rgb(10 13 19 / 0.94) !important;
+    --tzr-b: rgb(235 241 255 / 0.18) !important;
+  }
+}
+
+/* A site's explicit theme wins when it differs from the OS theme. */
+:is(html, body):is(
+    [data-theme="light"],
+    [data-color-mode="light"],
+    [data-bs-theme="light"],
+    .light,
+    .light-mode,
+    .light-theme
+  ) {
+  --tzr-s: #384354 !important;
+  --tzr-m: #536074 !important;
+  --tzr-h: rgb(255 255 255 / 0.62) !important;
+  --tzr-g: rgb(255 255 255 / 0.78) !important;
+  --tzr-gs: rgb(255 255 255 / 0.94) !important;
+  --tzr-b: rgb(20 28 40 / 0.18) !important;
+}
+
+:is(html, body):is(
+    [data-theme="dark"],
+    [data-color-mode="dark"],
+    [data-bs-theme="dark"],
+    .dark,
+    .dark-mode,
+    .dark-theme
+  ) {
+  --tzr-s: #d7dde8 !important;
+  --tzr-m: #b5c0d1 !important;
+  --tzr-h: rgb(0 0 0 / 0.72) !important;
+  --tzr-g: rgb(12 16 23 / 0.78) !important;
+  --tzr-gs: rgb(10 13 19 / 0.94) !important;
+  --tzr-b: rgb(235 241 255 / 0.18) !important;
+}
+
+/* The nonexistent ID raises specificity without a brittle chain of classes. */
+html body
+  :is(
+    small,
+    figcaption,
+    time,
+    [class~="muted"],
+    [class~="secondary"],
+    [class*="text-muted" i],
+    [class*="text_secondary" i],
+    [class*="text-secondary" i],
+    [class*="textSecondary"],
+    [class*="secondaryText"],
+    [class*="subtext" i],
+    [class*="subtitle" i],
+    [class*="metadata" i],
+    [class*="timestamp" i],
+    [class*="description" i],
+    [class*="caption" i],
+    [data-testid*="secondary" i],
+    [data-testid*="subtitle" i],
+    [data-testid*="metadata" i],
+    [data-testid*="timestamp" i]
+  ):not(#tz-readability-override) {
+  color: var(--tzr-s) !important;
+  opacity: 1 !important;
+  text-shadow: 0 1px 2px var(--tzr-h) !important;
+}
+
+html body :is([aria-disabled="true"], :disabled):not(#tz-readability-override),
+html body :is(input, textarea):not(#tz-readability-override)::placeholder {
+  color: var(--tzr-m) !important;
+  opacity: 0.88 !important;
+  text-shadow: 0 1px 2px var(--tzr-h) !important;
+}
+
+/* Localized glass for the surfaces where transparency most harms usability. */
+html body
+  :is(
+    [role="dialog"],
+    [role="alertdialog"],
+    [role="menu"],
+    [role="listbox"],
+    [role="tooltip"],
+    [popover]:popover-open
+  ):not(#tz-readability-override) {
+  background-color: var(--tzr-g) !important;
+  border-color: var(--tzr-b) !important;
+  box-shadow:
+    0 16px 48px rgb(0 0 0 / 0.24),
+    inset 0 0 0 1px var(--tzr-b) !important;
+  backdrop-filter: blur(22px) saturate(135%) !important;
+}
+
+html body :focus-visible:not(#tz-readability-override) {
+  outline: 2px solid AccentColor !important;
+  outline-offset: 2px !important;
+}
+
+html body ::selection {
+  color: HighlightText !important;
+  background: Highlight !important;
+  text-shadow: none !important;
+}
+
+@media (prefers-contrast: more) {
+  :root {
+    --tzr-s: CanvasText !important;
+    --tzr-m: CanvasText !important;
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  html body
+    :is(
+      [role="dialog"],
+      [role="alertdialog"],
+      [role="menu"],
+      [role="listbox"],
+      [role="tooltip"],
+      [popover]:popover-open
+    ):not(#tz-readability-override) {
+    background-color: var(--tzr-gs) !important;
+    backdrop-filter: none !important;
+  }
+}
