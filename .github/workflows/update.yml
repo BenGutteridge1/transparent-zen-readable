@@ -20,6 +20,8 @@ jobs:
         run: node build.mjs
       - name: Validate the result
         run: node test.mjs
+      - name: Audit component coverage
+        run: node audit.mjs
       - name: Commit an upstream update
         run: |
           if git diff --quiet -- styles.json; then
