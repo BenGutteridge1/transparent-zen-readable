@@ -1,7 +1,10 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { FEATURE_NAME } from "./config.mjs";
+import {
+  READABILITY_FEATURE_NAME,
+  SURFACE_FEATURE_NAME,
+} from "./config.mjs";
 
 const DEFAULT_SOURCE =
   "https://sameerasw.github.io/my-internet/styles.json";
@@ -40,17 +43,22 @@ function minifyCSS(css) {
     .replace(/\/\*[\s\S]*?\*\//g, "")
     .replace(/\s+/g, " ")
     .replace(/\s*([{},;])\s*/g, "$1")
+    .replace(/\(\s+/g, "(")
+    .replace(/\s+\)/g, ")")
     .replace(/:\s+/g, ":")
+    .replace(/\s*!important/g, "!important")
     .replace(/;}/g, "}")
     .trim();
 }
 
-const [sourceText, readabilitySource] = await Promise.all([
+const [sourceText, surfaceSource, readabilitySource] = await Promise.all([
   readSource(source),
+  fs.readFile(path.join(scriptDir, "surface-consistency.css"), "utf8"),
   fs.readFile(path.join(scriptDir, "readability.css"), "utf8"),
 ]);
 const styles = JSON.parse(sourceText);
 validateSource(styles);
+const surfaceCSS = minifyCSS(surfaceSource);
 const readabilityCSS = minifyCSS(readabilitySource);
 
 let siteCount = 0;
@@ -58,8 +66,10 @@ for (const [site, features] of Object.entries(styles.website)) {
   if (!features || typeof features !== "object" || Array.isArray(features)) {
     throw new TypeError(`Invalid feature object for ${site}`);
   }
-  delete features[FEATURE_NAME];
-  features[FEATURE_NAME] = readabilityCSS.trim();
+  delete features[SURFACE_FEATURE_NAME];
+  delete features[READABILITY_FEATURE_NAME];
+  features[SURFACE_FEATURE_NAME] = surfaceCSS;
+  features[READABILITY_FEATURE_NAME] = readabilityCSS;
   siteCount += 1;
 }
 

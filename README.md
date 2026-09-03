@@ -1,8 +1,18 @@
 # Transparent Zen — readable glass fork
 
 This is a drop-in `styles.json` for the Zen Internet extension. It keeps the
-upstream transparent themes and appends one normal, per-site feature:
-**readability boost**.
+upstream transparent themes and appends two normal, independently toggleable
+features to every site: **surface consistency** and **readability boost**.
+
+**Surface consistency** catches components that individual site themes often
+leave at their default opaque styling:
+
+- headers, navigation, toolbars, tab lists, buttons, tabs, and form controls;
+- hover, active, selected, pressed, expanded, and open states;
+- cards, panels, tiles, widgets, banners, notices, alerts, and toasts;
+- code blocks, tables, table headers, rows, and scrollbars;
+- specialist checkbox, radio, and range controls without breaking their native
+  behavior.
 
 The boost is deliberately selective. It does not recolour every paragraph or
 turn the page opaque. It:
@@ -27,8 +37,9 @@ The extension fetches a URL, so use the repository's public raw file:
 3. Agree to clear the existing styles when prompted, then click **Refetch
    latest styles** in the extension popup.
 
-You will now see **readability boost** in each site's feature list, so it can be
-disabled for an individual site without losing transparency there.
+You will now see **surface consistency** and **readability boost** in each site's
+feature list. Either can be disabled for an individual site without losing its
+upstream transparency theme.
 
 The included GitHub Action checks upstream daily and commits a rebuilt
 `styles.json` only when something changed. You can also rebuild locally with:
@@ -36,6 +47,7 @@ The included GitHub Action checks upstream daily and commits a rebuilt
 ```sh
 node build.mjs
 node test.mjs
+node audit.mjs
 ```
 
 To build from a downloaded or edited upstream file instead:
@@ -46,8 +58,13 @@ node build.mjs /path/to/upstream-styles.json styles.json
 
 ## Tune the appearance
 
-All shared values are at the top of `readability.css`. The most useful controls
-are:
+Shared values are at the top of `surface-consistency.css` and
+`readability.css`. The most useful controls are:
+
+- `--tzs-control`, `--tzs-panel`, `--tzs-hover`, and `--tzs-active` — component
+  translucency and interaction states;
+- `--tzs-strong` — fallback opacity for increased-contrast or
+  reduced-transparency preferences;
 
 - `--tzr-s` and `--tzr-m` — secondary and muted text strength;
 - `--tzr-h` — resilience over detailed wallpapers;
@@ -55,6 +72,19 @@ are:
 - the `blur(22px)` value — glass diffusion.
 
 After changing the CSS, run the build and validation commands again.
+
+## Coverage audit
+
+`audit.mjs` checks every generated site rather than sampling a few themes. It
+verifies coverage for navigation, ordinary controls, interaction states,
+cards and panels, feedback surfaces, code blocks, tables, and readability. The
+daily GitHub Action runs this audit after rebuilding from upstream.
+
+No generic stylesheet can see inside cross-origin iframes or closed Shadow DOM,
+and websites can introduce new component conventions at any time. Those are
+the remaining cases that require a site-specific selector. For normal document
+content, the shared layer prevents a missed upstream selector from leaving a
+bright default button, input, card, toolbar, or table behind.
 
 ## Design notes
 
@@ -73,5 +103,6 @@ all surfaces.
 
 The site themes come from
 [sameerasw/my-internet](https://github.com/sameerasw/my-internet) and retain the
-upstream MIT licence. `build.mjs`, `readability.css`, and the automation in this
-folder are an additive compatibility layer.
+upstream MIT licence. `build.mjs`, `surface-consistency.css`,
+`readability.css`, the audit, and the automation in this folder are an additive
+compatibility layer.
