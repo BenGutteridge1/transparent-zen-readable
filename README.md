@@ -22,6 +22,8 @@ The boost:
   Joy UI, Mantine, GitHub-style colour modes, and YouTube's `dark` attribute);
 - leaves buttons, inputs, icons, focus states, navigation, cards, menus, player
   controls, and every other surface under the original site's control;
+- skips supporting-text containers that contain interactive controls, preventing
+  a dark-page text colour from leaking into locally light buttons;
 - does not replace YouTube, GitHub, Atlassian, or other design-system variables.
 
 An earlier shared **surface consistency** feature tried to style generic
