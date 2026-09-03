@@ -58,6 +58,20 @@ for (const [site, features] of sites) {
     `${site}: missing text tokens`
   );
   assert.ok(
+    readable.includes('[data-theme="light" i]') &&
+      readable.includes('[data-theme="dark" i]') &&
+      readable.includes('[data-color-scheme="dark" i]') &&
+      readable.includes("html[dark]") &&
+      readable.includes("prefers-color-scheme:dark"),
+    `${site}: incomplete page-aware light/dark detection`
+  );
+  assert.ok(
+    readable.includes('[class~="subtle" i]') &&
+      readable.includes('[class~="tertiary" i]') &&
+      readable.includes('[class*="helper-text" i]'),
+    `${site}: incomplete muted-text coverage`
+  );
+  assert.ok(
     readable.includes(':not(:where(button,[role="button"]'),
     `${site}: interactive descendants are not protected`
   );
@@ -85,6 +99,11 @@ for (const [site, features] of sites) {
   assert.ok(
     !readable.includes(":focus"),
     `${site}: readability must preserve native focus styling`
+  );
+  assert.ok(
+    !readable.includes(":where(.light") &&
+      !readable.includes(":where(.dark"),
+    `${site}: bare theme classes must not match arbitrary content subtrees`
   );
   assert.ok(readable.includes("!important"), `${site}: missing cascade protection`);
   assert.ok(

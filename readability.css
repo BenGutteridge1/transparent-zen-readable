@@ -1,40 +1,90 @@
 /* Text-only readability layer for translucent websites. */
 
 :root {
-  --tzr-s: #384354 !important;
-  --tzr-m: #536074 !important;
+  /* OS/browser preference is the fallback when the page exposes no theme. */
+  --tzr-s: #2f3b4d !important;
+  --tzr-m: #46566e !important;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --tzr-s: #d7dde8 !important;
-    --tzr-m: #b5c0d1 !important;
+    --tzr-s: #e0e6ef !important;
+    --tzr-m: #bec9d9 !important;
   }
 }
 
-/* A site's explicit theme wins when it differs from the OS theme. */
-:is(html, body):is(
-    [data-theme="light"],
-    [data-color-mode="light"],
-    [data-bs-theme="light"],
-    .light,
+/*
+ * A page's explicit theme wins over the OS preference. Attribute markers may
+ * live on a nested app shell, so these declarations inherit from that shell.
+ * A bare .light/.dark class is accepted only on a conventional root element;
+ * otherwise an unrelated content class could recolour an entire subtree.
+ */
+:where(
+    [data-theme="light" i],
+    [data-theme-mode="light" i],
+    [data-color-mode="light" i],
+    [data-color-scheme="light" i],
+    [data-bs-theme="light" i],
+    [data-mui-color-scheme="light" i],
+    [data-joy-color-scheme="light" i],
+    [data-mantine-color-scheme="light" i],
+    [data-mode="light" i],
+    [data-appearance="light" i],
+    [data-scheme="light" i],
+    [theme="light" i],
+    [style*="color-scheme:light" i],
+    [style*="color-scheme: light" i],
+    .theme-light,
+    .theme_light,
+    .light-theme,
     .light-mode,
-    .light-theme
+    .is-light,
+    html.light,
+    body.light,
+    #app.light,
+    #root.light,
+    #__next.light
   ) {
-  --tzr-s: #384354 !important;
-  --tzr-m: #536074 !important;
+  --tzr-s: #2f3b4d !important;
+  --tzr-m: #46566e !important;
 }
 
-:is(html, body):is(
-    [data-theme="dark"],
-    [data-color-mode="dark"],
-    [data-bs-theme="dark"],
-    .dark,
+:where(
+    [data-theme="dark" i],
+    [data-theme="dim" i],
+    [data-theme="black" i],
+    [data-theme="night" i],
+    [data-theme-mode="dark" i],
+    [data-color-mode="dark" i],
+    [data-color-scheme="dark" i],
+    [data-bs-theme="dark" i],
+    [data-mui-color-scheme="dark" i],
+    [data-joy-color-scheme="dark" i],
+    [data-mantine-color-scheme="dark" i],
+    [data-mode="dark" i],
+    [data-appearance="dark" i],
+    [data-scheme="dark" i],
+    [theme="dark" i],
+    [theme="dim" i],
+    [style*="color-scheme:dark" i],
+    [style*="color-scheme: dark" i],
+    .theme-dark,
+    .theme_dark,
+    .dark-theme,
     .dark-mode,
-    .dark-theme
+    .is-dark,
+    html.dark,
+    body.dark,
+    #app.dark,
+    #root.dark,
+    #__next.dark,
+    html[dark],
+    body[dark],
+    #app[dark],
+    #root[dark]
   ) {
-  --tzr-s: #d7dde8 !important;
-  --tzr-m: #b5c0d1 !important;
+  --tzr-s: #e0e6ef !important;
+  --tzr-m: #bec9d9 !important;
 }
 
 /*
@@ -46,23 +96,49 @@ html body
     small,
     figcaption,
     time,
-    :is(p, span, div, li, dt, dd)[class~="muted"],
-    :is(p, span, div, li, dt, dd)[class~="secondary"],
-    :is(p, span, div, li, dt, dd)[class*="text-muted" i],
-    :is(p, span, div, li, dt, dd)[class*="text_secondary" i],
-    :is(p, span, div, li, dt, dd)[class*="text-secondary" i],
-    :is(p, span, div, li, dt, dd)[class*="textSecondary"],
-    :is(p, span, div, li, dt, dd)[class*="secondaryText"],
-    :is(p, span, div, li, dt, dd)[class*="subtext" i],
-    :is(p, span, div, li, dt, dd)[class*="subtitle" i],
-    :is(p, span, div, li, dt, dd)[class*="metadata" i],
-    :is(p, span, div, li, dt, dd)[class*="timestamp" i],
-    :is(p, span, div, li, dt, dd)[class*="description" i],
-    :is(p, span, div, li, dt, dd)[class*="caption" i],
-    :is(p, span, div, li, dt, dd)[data-testid*="secondary" i],
-    :is(p, span, div, li, dt, dd)[data-testid*="subtitle" i],
-    :is(p, span, div, li, dt, dd)[data-testid*="metadata" i],
-    :is(p, span, div, li, dt, dd)[data-testid*="timestamp" i]
+    :is(p, span, div, li, dt, dd, td, th, label):is(
+        [class~="muted" i],
+        [class~="secondary" i],
+        [class~="subtle" i],
+        [class~="subdued" i],
+        [class~="tertiary" i],
+        [class~="dimmed" i],
+        [class~="faded" i],
+        [class~="quiet" i],
+        [class*="text-muted" i],
+        [class*="text_secondary" i],
+        [class*="text-secondary" i],
+        [class*="textSecondary"],
+        [class*="secondaryText"],
+        [class*="text-subtle" i],
+        [class*="text_subtle" i],
+        [class*="text-tertiary" i],
+        [class*="text_tertiary" i],
+        [class*="subtext" i],
+        [class*="subtitle" i],
+        [class*="metadata" i],
+        [class*="timestamp" i],
+        [class*="description" i],
+        [class*="caption" i],
+        [class*="supporting" i],
+        [class*="helper-text" i],
+        [class*="helper_text" i],
+        [class*="hint-text" i],
+        [class*="hint_text" i],
+        [class*="byline" i],
+        [class*="annotation" i]
+      ),
+    :is(p, span, div, li, dt, dd, td, th, label):is(
+        [data-testid*="secondary" i],
+        [data-testid*="subtle" i],
+        [data-testid*="tertiary" i],
+        [data-testid*="subtitle" i],
+        [data-testid*="metadata" i],
+        [data-testid*="timestamp" i],
+        [data-testid*="description" i],
+        [data-testid*="caption" i],
+        [data-testid*="helper" i]
+      )
   ):not(#tz-readability-override):not(
     :where(
         button,
@@ -79,17 +155,19 @@ html body
       *
   ) {
   color: var(--tzr-s) !important;
+  -webkit-text-fill-color: var(--tzr-s) !important;
   opacity: 1 !important;
   text-shadow: none !important;
 }
 
 html body :is(input, textarea):not(#tz-readability-override)::placeholder {
   color: var(--tzr-m) !important;
-  opacity: 0.88 !important;
+  -webkit-text-fill-color: var(--tzr-m) !important;
+  opacity: 1 !important;
   text-shadow: none !important;
 }
 
-@media (prefers-contrast: more) {
+@media (prefers-contrast: more), (forced-colors: active) {
   :root {
     --tzr-s: CanvasText !important;
     --tzr-m: CanvasText !important;
