@@ -76,6 +76,10 @@ for (const [site, features] of sites) {
     `${site}: interactive descendants are not protected`
   );
   assert.ok(
+    readable.includes(':not(:has(:where(button,[role="button"]'),
+    `${site}: control-containing text containers are not protected`
+  );
+  assert.ok(
     !readable.includes("--tzr-h") &&
       !/text-shadow:(?!none(?:!important)?[;}])/.test(readable),
     `${site}: readability must not add text halos`
@@ -89,6 +93,10 @@ for (const [site, features] of sites) {
   assert.ok(
     !/(?:svg|icon|filter:|fill:|stroke:)/i.test(readable),
     `${site}: readability must not alter icon styling`
+  );
+  assert.ok(
+    !readable.includes("-webkit-text-fill-color"),
+    `${site}: inherited text fill can leak into light controls`
   );
   assert.ok(
     !/(?:background(?:-color)?|border-color|box-shadow|backdrop-filter|outline)\s*:/.test(

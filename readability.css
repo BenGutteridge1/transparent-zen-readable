@@ -90,6 +90,8 @@
 /*
  * Strengthen semantic supporting text only. Interactive controls and anything
  * inside them are excluded so site-owned button and icon colours remain intact.
+ * Containers that hold controls are excluded as well: otherwise an inherited
+ * text colour can leak into a locally light control inside a dark page.
  */
 html body
   :is(
@@ -153,16 +155,29 @@ html body
         textarea
       )
       *
+  ):not(
+    :has(
+        :where(
+            button,
+            [role="button"],
+            [role="tab"],
+            [role="menuitem"],
+            [role="option"],
+            [role="switch"],
+            a,
+            input,
+            select,
+            textarea
+          )
+      )
   ) {
   color: var(--tzr-s) !important;
-  -webkit-text-fill-color: var(--tzr-s) !important;
   opacity: 1 !important;
   text-shadow: none !important;
 }
 
 html body :is(input, textarea):not(#tz-readability-override)::placeholder {
   color: var(--tzr-m) !important;
-  -webkit-text-fill-color: var(--tzr-m) !important;
   opacity: 1 !important;
   text-shadow: none !important;
 }
