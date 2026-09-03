@@ -1,0 +1,201 @@
+/*
+ * Transparent Zen V2 — Aggressive Adaptive Readability
+ *
+ * Goal: keep transparent/frosted pages, but make text remain readable over
+ * arbitrary wallpapers, gradients and photographs.
+ *
+ * Theme detection is automatic through color-scheme + prefers-color-scheme.
+ */
+
+/* ---------- Theme palette ---------- */
+:root {
+  color-scheme: light dark !important;
+
+  --tz-fg-light: #181b21 !important;
+  --tz-fg-dark: #f4f6fb !important;
+
+  --tz-secondary-light: #303640 !important;
+  --tz-secondary-dark: #d9dee8 !important;
+
+  --tz-muted-light: #4a515d !important;
+  --tz-muted-dark: #c5cbd6 !important;
+
+  --tz-border-light: rgb(20 24 30 / .28) !important;
+  --tz-border-dark: rgb(245 247 252 / .30) !important;
+
+  --tz-surface-light: rgb(255 255 255 / .10) !important;
+  --tz-surface-dark: rgb(0 0 0 / .16) !important;
+}
+
+/* ---------- Aggressive text contrast ---------- */
+/*
+ * Unlike V1, this intentionally catches ordinary text-bearing elements.
+ * It does NOT touch media, icons or form controls.
+ */
+:where(
+  body, main, article, section, aside, nav, header, footer,
+  p, li, dt, dd, blockquote, cite,
+  h1, h2, h3, h4, h5, h6,
+  label, legend, summary,
+  a, button,
+  small, strong, b, em, i, mark,
+  figcaption, caption,
+  [role="heading"], [role="button"], [role="link"],
+  [role="menuitem"], [role="option"], [role="tab"],
+  [role="listitem"], [role="tooltip"],
+  [class*="text"], [class*="Text"],
+  [class*="title"], [class*="Title"],
+  [class*="label"], [class*="Label"],
+  [class*="description"], [class*="Description"],
+  [class*="content"], [class*="Content"],
+  [class*="subtitle"], [class*="Subtitle"],
+  [class*="secondary"], [class*="Secondary"],
+  [class*="muted"], [class*="Muted"]
+) {
+  text-shadow:
+    light-dark(
+      0 1px 1px rgb(255 255 255 / .92),
+      0 1px 1px rgb(0 0 0 / .92)
+    ) !important;
+}
+
+/* Primary text: force a high-contrast neutral only when the element has
+ * inherited/default-looking text. Site-specific accent colours can survive
+ * because this rule is scoped to common text containers rather than *. */
+:where(
+  body, main, article, section, p, li, dt, dd,
+  h1, h2, h3, h4, h5, h6, label, summary,
+  [role="heading"], [role="listitem"]
+) {
+  color: light-dark(var(--tz-fg-light), var(--tz-fg-dark)) !important;
+}
+
+/* Secondary/muted text gets a separate readable neutral. */
+:where(
+  small, figcaption, caption,
+  [class*="secondary"], [class*="Secondary"],
+  [class*="muted"], [class*="Muted"],
+  [class*="subtle"], [class*="Subtle"],
+  [class*="description"], [class*="Description"],
+  [class*="subtitle"], [class*="Subtitle"]
+) {
+  color: light-dark(var(--tz-secondary-light), var(--tz-secondary-dark)) !important;
+}
+
+/* ---------- Links ---------- */
+:where(a, [role="link"]) {
+  text-decoration-thickness: .08em !important;
+  text-underline-offset: .12em !important;
+}
+
+/* Preserve conventional coloured links, but ensure very pale/dark links
+ * don't disappear into the wallpaper. */
+@media (prefers-color-scheme: light) {
+  :where(a, [role="link"]) {
+    text-shadow: 0 1px 1px rgb(255 255 255 / .95) !important;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  :where(a, [role="link"]) {
+    text-shadow: 0 1px 1px rgb(0 0 0 / .95) !important;
+  }
+}
+
+/* ---------- Readability "backplate" ---------- */
+/*
+ * The backplate is intentionally tiny and only applies to text containers.
+ * This is the key V2 improvement over simply changing text colours:
+ * white/black text can remain readable when the wallpaper happens to be
+ * close to the same luminance.
+ */
+:where(
+  p, li, dt, dd, blockquote,
+  h1, h2, h3, h4, h5, h6,
+  label, figcaption, caption,
+  [role="heading"], [role="tooltip"],
+  [class*="description"], [class*="Description"],
+  [class*="subtitle"], [class*="Subtitle"],
+  [class*="muted"], [class*="Muted"]
+) {
+  background-color: light-dark(
+    rgb(255 255 255 / .035),
+    rgb(0 0 0 / .08)
+  ) !important;
+  border-radius: .18em !important;
+}
+
+/* ---------- Form controls ---------- */
+:where(
+  input, textarea, select,
+  button, [role="button"],
+  [contenteditable="true"]
+) {
+  color: light-dark(#181b21, #f4f6fb) !important;
+  text-shadow: light-dark(
+    0 1px 1px rgb(255 255 255 / .90),
+    0 1px 1px rgb(0 0 0 / .90)
+  ) !important;
+}
+
+:where(::placeholder, input::placeholder, textarea::placeholder) {
+  color: light-dark(rgb(24 27 33 / .68), rgb(244 246 251 / .70)) !important;
+  opacity: 1 !important;
+}
+
+/* ---------- Disabled UI ---------- */
+:where([disabled], [aria-disabled="true"]) {
+  color: light-dark(
+    rgb(35 39 46 / .78),
+    rgb(235 238 245 / .78)
+  ) !important;
+  text-shadow: light-dark(
+    0 1px 1px rgb(255 255 255 / .85),
+    0 1px 1px rgb(0 0 0 / .85)
+  ) !important;
+}
+
+/* ---------- Don't damage visual media ---------- */
+:where(
+  img, picture, video, canvas, iframe,
+  svg, svg *, [role="img"], [aria-hidden="true"]
+) {
+  text-shadow: none !important;
+}
+
+/* ---------- Code / preformatted text ---------- */
+:where(pre, code, kbd, samp) {
+  color: light-dark(#252a32, #edf0f6) !important;
+  text-shadow: light-dark(
+    0 1px 1px rgb(255 255 255 / .85),
+    0 1px 1px rgb(0 0 0 / .85)
+  ) !important;
+}
+
+/* ---------- Selection ---------- */
+::selection {
+  text-shadow: none !important;
+}
+
+/* ---------- Fallback for browsers without light-dark() ---------- */
+@supports not (color: light-dark(black, white)) {
+  :root { color-scheme: light dark !important; }
+
+  @media (prefers-color-scheme: light) {
+    :where(body, main, article, section, p, li, dt, dd, h1, h2, h3, h4, h5, h6, label, summary) {
+      color: #181b21 !important;
+    }
+    :where(small, figcaption, caption, [class*="muted"], [class*="Muted"], [class*="secondary"], [class*="Secondary"]) {
+      color: #303640 !important;
+    }
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :where(body, main, article, section, p, li, dt, dd, h1, h2, h3, h4, h5, h6, label, summary) {
+      color: #f4f6fb !important;
+    }
+    :where(small, figcaption, caption, [class*="muted"], [class*="Muted"], [class*="secondary"], [class*="Secondary"]) {
+      color: #d9dee8 !important;
+    }
+  }
+}

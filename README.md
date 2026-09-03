@@ -1,47 +1,80 @@
-# Transparent Zen — Readability Edition
+# Transparent Zen V2 — Aggressive Readability
 
-The upstream `my-internet` styles make websites transparent, but grey/secondary
-text can become hard to see over a changing frosted background.
+V2 is intentionally more aggressive than V1.
 
-This version keeps the existing site-specific transparency rules and adds a
-second **readability** feature:
+The original Transparent Zen project uses site-specific CSS and then generates
+the large `styles.json` database. The repository specifically asks contributors
+to respect automatic day/night theming and says the generated JSON is rebuilt
+from the website CSS files.
 
-- light mode → darker muted text
-- dark mode → lighter muted text
-- subtle adaptive text shadow over arbitrary backgrounds
-- more readable placeholders and disabled controls
-- SVG/images/video/canvas/icon-only elements are left alone
-- uses `color-scheme: light dark` + `light-dark()` for automatic theme choice
+V2 therefore works best as a **global readability overlay** applied after the
+site's transparency CSS.
 
-## Files
+## What V2 changes
 
-`contrast.css` — standalone layer for testing via `userContent.css`.
+1. **Primary text**
+   - light: near-black
+   - dark: near-white
 
-`build-styles.mjs` — downloads the current upstream `styles.json` and injects
-the readability feature into every site that has a transparency feature.
+2. **Secondary/muted text**
+   - light: dark grey
+   - dark: light grey
 
-`styles-overlay-example.json` — tiny example showing the expected JSON shape.
+3. **Text shadow**
+   - adds a tiny opposite-luminance halo so text remains readable over photos,
+     gradients and wallpapers.
 
-## Build the complete database
+4. **Micro-backplates**
+   - adds an extremely subtle translucent surface behind paragraphs,
+     headings, captions and descriptions.
+   - This is the biggest improvement when a wallpaper has the same luminance as
+     the text.
 
-Requires Node.js with `fetch` support:
+5. **Forms and placeholders**
+   - explicitly strengthened.
+
+6. **Media**
+   - images, SVGs, video, canvas and icon-only elements are excluded.
+
+7. **Automatic theme detection**
+   - uses `color-scheme` + `light-dark()`, with a
+     `prefers-color-scheme` fallback.
+
+## Trade-off
+
+This is deliberately more opinionated. Some websites use coloured text as part
+of their UI, and V2 can flatten some of that colour hierarchy. If that happens,
+add a site-specific exception rather than weakening the global layer.
+
+## Installing/testing
+
+Try `v2-global.css` first in whatever user CSS mechanism you use with Zen.
+If it looks good, use the builder to create a complete generated JSON.
 
 ```bash
-node build-styles.mjs
+node build-v2.mjs
 ```
 
-The generated `styles.json` is intentionally built from the latest upstream
-copy, because the upstream generated database is large and changes frequently.
+The builder downloads the current upstream `styles.json`, preserves its website
+entries, and adds a `readability-v2` feature to every transparency-enabled
+website.
 
-## Tuning
+## Suggested tuning
 
-The main light/dark values are:
+More contrast:
 
 ```css
---tz-readable-light: #3b3f46;
---tz-readable-dark: #d9dde5;
+--tz-fg-light: #101216;
+--tz-fg-dark: #ffffff;
+--tz-secondary-light: #252a32;
+--tz-secondary-dark: #e9edf5;
 ```
 
-For stronger contrast use roughly `#252930` / `#f0f2f6`.
+Less intrusive:
 
-For a softer look use roughly `#555b65` / `#c5cad4`.
+```css
+--tz-fg-light: #242830;
+--tz-fg-dark: #e8ebf1;
+--tz-secondary-light: #3f4650;
+--tz-secondary-dark: #cbd1dc;
+```
