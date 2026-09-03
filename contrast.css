@@ -1,0 +1,55 @@
+/*
+ * Transparent Zen — readability layer
+ * Keeps the glass/transparent aesthetic but improves common muted text.
+ */
+:root {
+  color-scheme: light dark !important;
+  --tz-readable-light: #3b3f46 !important;
+  --tz-readable-dark: #d9dde5 !important;
+  --tz-readable-shadow-light: 0 1px 1px rgb(255 255 255 / .78) !important;
+  --tz-readable-shadow-dark: 0 1px 1px rgb(0 0 0 / .82) !important;
+}
+
+:where(
+  small, figcaption, .muted, .secondary, .secondary-text,
+  .text-muted, .text-secondary, .subtle, .description, .caption,
+  [class*="muted"], [class*="Muted"], [class*="secondary"],
+  [class*="Secondary"], [class*="caption"], [class*="Caption"]
+) {
+  color: light-dark(var(--tz-readable-light), var(--tz-readable-dark)) !important;
+  text-shadow: light-dark(
+    var(--tz-readable-shadow-light),
+    var(--tz-readable-shadow-dark)
+  ) !important;
+}
+
+:where([disabled], [aria-disabled="true"]) {
+  color: light-dark(rgb(55 59 66 / .76), rgb(225 229 237 / .76)) !important;
+  text-shadow: light-dark(
+    0 1px 1px rgb(255 255 255 / .70),
+    0 1px 1px rgb(0 0 0 / .78)
+  ) !important;
+}
+
+:where(::placeholder, input::placeholder, textarea::placeholder) {
+  color: light-dark(rgb(55 59 66 / .72), rgb(225 229 237 / .72)) !important;
+  opacity: 1 !important;
+}
+
+:where(svg, svg *, img, video, canvas, [role="img"], [aria-hidden="true"]) {
+  text-shadow: none !important;
+}
+
+@supports (paint-order: stroke fill) {
+  :where(
+    small, figcaption, .muted, .secondary, .secondary-text,
+    .text-muted, .text-secondary, .subtle, .description, .caption,
+    [class*="muted"], [class*="Muted"], [class*="secondary"],
+    [class*="Secondary"], [class*="caption"], [class*="Caption"]
+  ) {
+    -webkit-text-stroke: light-dark(
+      .12px rgb(255 255 255 / .35),
+      .12px rgb(0 0 0 / .35)
+    ) !important;
+  }
+}
