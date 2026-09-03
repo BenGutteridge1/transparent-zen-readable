@@ -18,17 +18,13 @@ turn the page opaque. It:
 
 ## Use it
 
-The extension fetches a URL, so `styles.json` needs to be hosted over HTTPS.
-The simplest durable setup is a small GitHub repository:
+The extension fetches a URL, so use the repository's public raw file:
 
-1. Create a repository and upload this entire folder, including `.github`.
-2. In the repository's **Settings → Pages**, deploy from the `main` branch and
-   the root folder.
-3. Your stylesheet URL will be:
-   `https://YOUR-NAME.github.io/YOUR-REPOSITORY/styles.json`.
-4. Open Zen Internet, choose **Advanced Settings**, paste that address into
-   **Custom Styles Repository**, and click **Set URL**.
-5. Agree to clear the existing styles when prompted, then click **Refetch
+`https://raw.githubusercontent.com/BenGutteridge1/transparent-zen-readable/main/styles.json`
+
+1. Open Zen Internet and choose **Advanced Settings**.
+2. Paste that address into **Custom Styles Repository**, then click **Set URL**.
+3. Agree to clear the existing styles when prompted, then click **Refetch
    latest styles** in the extension popup.
 
 You will now see **readability boost** in each site's feature list, so it can be
@@ -53,9 +49,9 @@ node build.mjs /path/to/upstream-styles.json styles.json
 All shared values are at the top of `readability.css`. The most useful controls
 are:
 
-- `--tzr-text-secondary` and `--tzr-text-muted` — text strength;
-- `--tzr-text-halo` — resilience over detailed wallpapers;
-- `--tzr-glass` — floating-panel opacity;
+- `--tzr-s` and `--tzr-m` — secondary and muted text strength;
+- `--tzr-h` — resilience over detailed wallpapers;
+- `--tzr-g` and `--tzr-gs` — normal and reduced-transparency glass opacity;
 - the `blur(22px)` value — glass diffusion.
 
 After changing the CSS, run the build and validation commands again.
