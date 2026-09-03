@@ -12,10 +12,14 @@ YouTube controls or any other website.
 
 The boost:
 
-- strengthens semantic secondary, muted, caption, metadata, and timestamp text;
+- strengthens semantic secondary, muted, subtle, tertiary, caption, metadata,
+  helper, and timestamp text;
 - restores supporting text that sites fade using `opacity`;
-- improves placeholder legibility;
-- uses adaptive light/dark colours without halos or text shadows;
+- improves placeholder legibility with a fully opaque, separate muted tone;
+- uses higher-contrast light/dark colours without halos or text shadows;
+- follows the browser preference as a fallback, but gives precedence to common
+  page-level theme markers (including nested app shells, Bootstrap, Material UI,
+  Joy UI, Mantine, GitHub-style colour modes, and YouTube's `dark` attribute);
 - leaves buttons, inputs, icons, focus states, navigation, cards, menus, player
   controls, and every other surface under the original site's control;
 - does not replace YouTube, GitHub, Atlassian, or other design-system variables.
@@ -65,6 +69,10 @@ The shared values at the top of `readability.css` are:
 - `--tzr-m` — muted and placeholder text strength.
 
 After changing them, run the build and validation commands again.
+
+Theme detection is intentionally CSS-only: no page script, storage access, or
+extension permission is required. A site that exposes neither a theme marker
+nor the browser colour-scheme preference will use the browser preference.
 
 The selectors for YouTube's overflow buttons and home-feed blur are isolated in
 `youtube-refinement.css`.
