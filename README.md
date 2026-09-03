@@ -21,12 +21,12 @@ turn the page opaque. It:
 - restores text that sites fade using `opacity`;
 - improves placeholders and disabled controls;
 - uses stronger adaptive colours without adding halos or text shadows;
-- restores faded monochrome icons in controls and navigation while preserving
-  logos, avatars, emoji, flags, badges, and branded artwork;
 - gives menus, dialogs, listboxes, and tooltips a properly blurred glass scrim;
 - respects explicit light/dark site themes, increased contrast, reduced
   transparency, and forced-colour preferences;
-- adds a visible keyboard focus ring.
+- keeps search and form fields' native focus styling instead of drawing a
+  yellow rectangular box inside them;
+- adds a restrained adaptive-blue keyboard focus ring to other controls.
 
 ## Use it
 
@@ -69,7 +69,7 @@ Shared values are at the top of `surface-consistency.css` and
   reduced-transparency preferences;
 
 - `--tzr-s` and `--tzr-m` — secondary and muted text strength;
-- `--tzr-i` — monochrome icon colour;
+- `--tzr-f` — non-text-control keyboard focus colour;
 - `--tzr-g` and `--tzr-gs` — normal and reduced-transparency glass opacity;
 - the `blur(22px)` value — glass diffusion.
 
@@ -92,11 +92,10 @@ bright default button, input, card, toolbar, or table behind.
 
 Transparent interfaces become unreliable when text and wallpaper are allowed
 to meet directly. Blur alone does not guarantee contrast: bright or detailed
-wallpaper can still sit behind grey text. This fork therefore uses three
-layers of defence—stronger semantic text colour, clearer monochrome icons, and
-localized glass only for floating surfaces. It deliberately avoids text
-shadows and icon filters because they can look abrasive against detailed
-wallpapers.
+wallpaper can still sit behind grey text. This fork therefore uses two layers
+of defence—stronger semantic text colour and localized glass only for floating
+surfaces. It deliberately avoids text shadows because they can look abrasive
+against detailed wallpapers. Icons retain each website's original styling.
 
 For the calmest result, use a low-detail wallpaper with moderate luminance,
 keep blur around 18–28 px, and avoid pushing every large content panel below

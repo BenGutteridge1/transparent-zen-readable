@@ -27,7 +27,6 @@ const report = {
   enhanced: {
     surfaceConsistency: 0,
     readability: 0,
-    iconVisibility: 0,
     navigation: 0,
     controls: 0,
     stateStyles: 0,
@@ -58,10 +57,6 @@ for (const [site, features] of sites) {
   const checks = {
     surfaceConsistency: surface.includes("--tzs-control"),
     readability: readable.includes("--tzr-s"),
-    iconVisibility:
-      readable.includes("--tzr-i") &&
-      readable.includes("svg[data-icon]") &&
-      readable.includes('[class*="icon" i]'),
     navigation: surface.includes('[role="navigation"]'),
     controls: /button.*input.*select.*textarea/s.test(surface),
     stateStyles:

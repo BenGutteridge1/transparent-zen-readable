@@ -36,11 +36,20 @@ for (const [site, features] of sites) {
   const readable = features[READABILITY_FEATURE_NAME];
   assert.ok(surface.includes("--tzs-control"), `${site}: missing surface tokens`);
   assert.ok(readable.includes("--tzr-s"), `${site}: missing text tokens`);
-  assert.ok(readable.includes("--tzr-i"), `${site}: missing icon tokens`);
+  assert.ok(
+    readable.includes("--tzr-f") &&
+      !readable.includes("outline:2px solid AccentColor") &&
+      readable.includes('[role="searchbox"]'),
+    `${site}: search fields must not receive the global accent-colour box`
+  );
   assert.ok(
     !readable.includes("--tzr-h") &&
       !/text-shadow:(?!none(?:!important)?[;}])/.test(readable),
     `${site}: readability must not add text halos`
+  );
+  assert.ok(
+    !readable.includes("--tzr-i") && !readable.includes("svg[data-icon]"),
+    `${site}: readability must preserve the site's icon styling`
   );
   assert.ok(
     surface.includes("!important") && readable.includes("!important"),
