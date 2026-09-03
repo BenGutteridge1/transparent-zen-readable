@@ -3,7 +3,7 @@
 :root {
   --tzr-s: #384354 !important;
   --tzr-m: #536074 !important;
-  --tzr-h: rgb(255 255 255 / 0.62) !important;
+  --tzr-i: #273244 !important;
   --tzr-g: rgb(255 255 255 / 0.78) !important;
   --tzr-gs: rgb(255 255 255 / 0.94) !important;
   --tzr-b: rgb(20 28 40 / 0.18) !important;
@@ -23,7 +23,7 @@
   :root {
     --tzr-s: #d7dde8 !important;
     --tzr-m: #b5c0d1 !important;
-    --tzr-h: rgb(0 0 0 / 0.72) !important;
+    --tzr-i: #eef2f8 !important;
     --tzr-g: rgb(12 16 23 / 0.78) !important;
     --tzr-gs: rgb(10 13 19 / 0.94) !important;
     --tzr-b: rgb(235 241 255 / 0.18) !important;
@@ -41,7 +41,7 @@
   ) {
   --tzr-s: #384354 !important;
   --tzr-m: #536074 !important;
-  --tzr-h: rgb(255 255 255 / 0.62) !important;
+  --tzr-i: #273244 !important;
   --tzr-g: rgb(255 255 255 / 0.78) !important;
   --tzr-gs: rgb(255 255 255 / 0.94) !important;
   --tzr-b: rgb(20 28 40 / 0.18) !important;
@@ -57,7 +57,7 @@
   ) {
   --tzr-s: #d7dde8 !important;
   --tzr-m: #b5c0d1 !important;
-  --tzr-h: rgb(0 0 0 / 0.72) !important;
+  --tzr-i: #eef2f8 !important;
   --tzr-g: rgb(12 16 23 / 0.78) !important;
   --tzr-gs: rgb(10 13 19 / 0.94) !important;
   --tzr-b: rgb(235 241 255 / 0.18) !important;
@@ -89,14 +89,59 @@ html body
   ):not(#tz-readability-override) {
   color: var(--tzr-s) !important;
   opacity: 1 !important;
-  text-shadow: 0 1px 2px var(--tzr-h) !important;
+  text-shadow: none !important;
 }
 
 html body :is([aria-disabled="true"], :disabled):not(#tz-readability-override),
 html body :is(input, textarea):not(#tz-readability-override)::placeholder {
   color: var(--tzr-m) !important;
   opacity: 0.88 !important;
-  text-shadow: 0 1px 2px var(--tzr-h) !important;
+  text-shadow: none !important;
+}
+
+/*
+ * Restore common monochrome icons without flattening logos or multicolour
+ * artwork. Most modern icon systems use currentColor, so a stronger color and
+ * full opacity are enough; deliberately hard-coded brand fills remain intact.
+ */
+html body
+  :is(
+    button,
+    [role="button"],
+    [role="tab"],
+    [role="menuitem"],
+    [role="treeitem"],
+    nav,
+    [role="navigation"],
+    [role="toolbar"]
+  )
+  :is(svg, [class*="icon" i]):not(
+    [class*="brand" i],
+    [class*="logo" i],
+    [class*="avatar" i],
+    [class*="emoji" i],
+    [class*="badge" i],
+    [class*="flag" i]
+  ):not(:where([class*="brand" i], [class*="logo" i]) *),
+html body
+  :is(
+    svg[data-icon],
+    svg[class*="icon" i],
+    svg[class*="lucide" i],
+    [class*="material-icon" i],
+    [class*="material-symbol" i],
+    [class^="fa-"],
+    [class*=" fa-"]
+  ):not(
+    [class*="brand" i],
+    [class*="logo" i],
+    [class*="avatar" i],
+    [class*="emoji" i],
+    [class*="badge" i],
+    [class*="flag" i]
+  ):not(:where([class*="brand" i], [class*="logo" i]) *) {
+  color: var(--tzr-i) !important;
+  opacity: 1 !important;
 }
 
 /* Localized glass for the surfaces where transparency most harms usability. */
@@ -132,6 +177,7 @@ html body ::selection {
   :root {
     --tzr-s: CanvasText !important;
     --tzr-m: CanvasText !important;
+    --tzr-i: CanvasText !important;
   }
 }
 

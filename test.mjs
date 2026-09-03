@@ -36,6 +36,12 @@ for (const [site, features] of sites) {
   const readable = features[READABILITY_FEATURE_NAME];
   assert.ok(surface.includes("--tzs-control"), `${site}: missing surface tokens`);
   assert.ok(readable.includes("--tzr-s"), `${site}: missing text tokens`);
+  assert.ok(readable.includes("--tzr-i"), `${site}: missing icon tokens`);
+  assert.ok(
+    !readable.includes("--tzr-h") &&
+      !/text-shadow:(?!none(?:!important)?[;}])/.test(readable),
+    `${site}: readability must not add text halos`
+  );
   assert.ok(
     surface.includes("!important") && readable.includes("!important"),
     `${site}: missing cascade protection`
