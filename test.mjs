@@ -5,6 +5,7 @@ import { fileURLToPath } from "node:url";
 import {
   LEGACY_SURFACE_FEATURE_NAME,
   READABILITY_FEATURE_NAME,
+  YOUTUBE_REFINEMENT_FEATURE_NAME,
 } from "./config.mjs";
 
 const scriptDir = path.dirname(fileURLToPath(import.meta.url));
@@ -31,6 +32,25 @@ for (const [site, features] of sites) {
     !(LEGACY_SURFACE_FEATURE_NAME in features),
     `${site}: legacy global surface overrides must not be injected`
   );
+  if (site === "youtube.com.css") {
+    assert.equal(
+      featureNames.at(-2),
+      YOUTUBE_REFINEMENT_FEATURE_NAME,
+      `${site}: YouTube refinement must precede readability`
+    );
+    const youtube = features[YOUTUBE_REFINEMENT_FEATURE_NAME];
+    assert.ok(
+      youtube.includes("ytd-menu-renderer") &&
+        youtube.includes('ytd-browse[page-subtype="home"]') &&
+        youtube.includes("backdrop-filter:none!important"),
+      `${site}: incomplete YouTube overflow-menu or home-frost correction`
+    );
+  } else {
+    assert.ok(
+      !(YOUTUBE_REFINEMENT_FEATURE_NAME in features),
+      `${site}: YouTube-only refinement leaked into another site`
+    );
+  }
 
   const readable = features[READABILITY_FEATURE_NAME];
   assert.ok(

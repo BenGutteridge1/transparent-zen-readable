@@ -5,6 +5,7 @@ import { fileURLToPath } from "node:url";
 import {
   LEGACY_SURFACE_FEATURE_NAME,
   READABILITY_FEATURE_NAME,
+  YOUTUBE_REFINEMENT_FEATURE_NAME,
 } from "./config.mjs";
 
 const scriptDir = path.dirname(fileURLToPath(import.meta.url));
@@ -15,6 +16,7 @@ const sites = Object.entries(styles.website || {});
 const injectedNames = new Set([
   LEGACY_SURFACE_FEATURE_NAME,
   READABILITY_FEATURE_NAME,
+  YOUTUBE_REFINEMENT_FEATURE_NAME,
 ]);
 
 const report = {
@@ -30,6 +32,11 @@ const report = {
     nativeIconsPreserved: 0,
     nativeFocusPreserved: 0,
     siteDesignTokensPreserved: 0,
+  },
+  youtube: {
+    scopedToYouTubeOnly: true,
+    nativeOverflowMenus: false,
+    clearerHomeFeed: false,
   },
   exceptions: [],
 };
@@ -50,6 +57,17 @@ for (const [site, features] of sites) {
   }
 
   const readable = features[READABILITY_FEATURE_NAME] || "";
+  const youtube = features[YOUTUBE_REFINEMENT_FEATURE_NAME] || "";
+  if (site === "youtube.com.css") {
+    report.youtube.nativeOverflowMenus =
+      youtube.includes("ytd-menu-renderer") &&
+      youtube.includes("background-color:transparent!important");
+    report.youtube.clearerHomeFeed =
+      youtube.includes('ytd-browse[page-subtype="home"]') &&
+      youtube.includes("backdrop-filter:none!important");
+  } else if (youtube) {
+    report.youtube.scopedToYouTubeOnly = false;
+  }
   const checks = {
     readability: readable.includes("--tzr-s"),
     nativeControlsPreserved:
@@ -70,6 +88,11 @@ for (const [site, features] of sites) {
     else report.exceptions.push({ site, category });
   }
 }
+
+assert.ok(
+  Object.values(report.youtube).every(Boolean),
+  "The YouTube refinement is incomplete or leaked into another site"
+);
 
 assert.equal(report.exceptions.length, 0, "Preservation exceptions were found");
 for (const count of Object.values(report.enhanced)) {

@@ -4,6 +4,12 @@ This is a drop-in `styles.json` for the Zen Internet extension. It preserves
 the upstream site's precise transparency rules and appends one deliberately
 text-only feature to every site: **readability boost**.
 
+YouTube also receives one narrowly scoped optional feature: **yt-clear home &
+native menus**. It removes filled circles from three-dot overflow buttons,
+shows feed/recommendation overflow actions on hover or keyboard focus, and
+removes large-area blur from the YouTube home feed. It does not change other
+YouTube controls or any other website.
+
 The boost:
 
 - strengthens semantic secondary, muted, caption, metadata, and timestamp text;
@@ -32,9 +38,9 @@ The extension fetches a URL, so use the repository's public raw file:
 3. Agree to clear the existing styles when prompted, then click **Refetch
    latest styles** in the extension popup.
 
-You will see **readability boost** in each site's feature list. It can be
-disabled for an individual site without losing the upstream transparency
-theme.
+You will see **readability boost** in each site's feature list. YouTube also
+shows **yt-clear home & native menus**. Either can be disabled without losing
+the upstream transparency theme.
 
 The included GitHub Action checks upstream daily and commits a rebuilt
 `styles.json` only when something changed. You can also rebuild locally with:
@@ -60,12 +66,16 @@ The shared values at the top of `readability.css` are:
 
 After changing them, run the build and validation commands again.
 
+The selectors for YouTube's overflow buttons and home-feed blur are isolated in
+`youtube-refinement.css`.
+
 ## Preservation audit
 
 `audit.mjs` checks all 663 generated sites rather than sampling a few themes.
 It verifies that the readability layer does not inject generic surface rules,
 touch icons, replace site design tokens, or override native focus styling. The
-daily GitHub Action runs this audit after every upstream rebuild.
+audit also verifies that the YouTube refinement exists only on YouTube. The
+daily GitHub Action runs these checks after every upstream rebuild.
 
 No generic stylesheet can reliably infer the purpose or native visual language
 of every control on every website. Site-specific selectors from the upstream
@@ -88,4 +98,5 @@ Transparency works best as depth, not as the absence of all surfaces.
 The site themes come from
 [sameerasw/my-internet](https://github.com/sameerasw/my-internet) and retain the
 upstream MIT licence. `build.mjs`, `readability.css`, the preservation audit,
-and the automation in this folder form the additive text-readability layer.
+the YouTube refinement, and the automation in this folder form the additive
+compatibility layer.

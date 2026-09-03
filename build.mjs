@@ -4,6 +4,7 @@ import { fileURLToPath } from "node:url";
 import {
   LEGACY_SURFACE_FEATURE_NAME,
   READABILITY_FEATURE_NAME,
+  YOUTUBE_REFINEMENT_FEATURE_NAME,
 } from "./config.mjs";
 
 const DEFAULT_SOURCE =
@@ -51,13 +52,15 @@ function minifyCSS(css) {
     .trim();
 }
 
-const [sourceText, readabilitySource] = await Promise.all([
+const [sourceText, readabilitySource, youtubeRefinementSource] = await Promise.all([
   readSource(source),
   fs.readFile(path.join(scriptDir, "readability.css"), "utf8"),
+  fs.readFile(path.join(scriptDir, "youtube-refinement.css"), "utf8"),
 ]);
 const styles = JSON.parse(sourceText);
 validateSource(styles);
 const readabilityCSS = minifyCSS(readabilitySource);
+const youtubeRefinementCSS = minifyCSS(youtubeRefinementSource);
 
 let siteCount = 0;
 for (const [site, features] of Object.entries(styles.website)) {
@@ -66,6 +69,10 @@ for (const [site, features] of Object.entries(styles.website)) {
   }
   delete features[LEGACY_SURFACE_FEATURE_NAME];
   delete features[READABILITY_FEATURE_NAME];
+  delete features[YOUTUBE_REFINEMENT_FEATURE_NAME];
+  if (site === "youtube.com.css") {
+    features[YOUTUBE_REFINEMENT_FEATURE_NAME] = youtubeRefinementCSS;
+  }
   features[READABILITY_FEATURE_NAME] = readabilityCSS;
   siteCount += 1;
 }
