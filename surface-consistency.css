@@ -1,7 +1,0 @@
-/*
- * Retired compatibility layer.
- *
- * Generic button, input, navigation, card, and icon selectors overrode refined
- * site-specific themes. The build no longer injects this file. Surface styling
- * is intentionally left to each upstream site's precise selectors.
- */
