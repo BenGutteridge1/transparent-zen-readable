@@ -1,32 +1,25 @@
 # Transparent Zen — readable glass fork
 
-This is a drop-in `styles.json` for the Zen Internet extension. It keeps the
-upstream transparent themes and appends two normal, independently toggleable
-features to every site: **surface consistency** and **readability boost**.
+This is a drop-in `styles.json` for the Zen Internet extension. It preserves
+the upstream site's precise transparency rules and appends one deliberately
+text-only feature to every site: **readability boost**.
 
-**Surface consistency** catches components that individual site themes often
-leave at their default opaque styling:
-
-- headers, navigation, toolbars, tab lists, buttons, tabs, and form controls;
-- hover, active, selected, pressed, expanded, and open states;
-- cards, panels, tiles, widgets, banners, notices, alerts, and toasts;
-- code blocks, tables, table headers, rows, and scrollbars;
-- specialist checkbox, radio, and range controls without breaking their native
-  behavior.
-
-The boost is deliberately selective. It does not recolour every paragraph or
-turn the page opaque. It:
+The boost:
 
 - strengthens semantic secondary, muted, caption, metadata, and timestamp text;
-- restores text that sites fade using `opacity`;
-- improves placeholders and disabled controls;
-- uses stronger adaptive colours without adding halos or text shadows;
-- gives menus, dialogs, listboxes, and tooltips a properly blurred glass scrim;
-- respects explicit light/dark site themes, increased contrast, reduced
-  transparency, and forced-colour preferences;
-- keeps search and form fields' native focus styling instead of drawing a
-  yellow rectangular box inside them;
-- adds a restrained adaptive-blue keyboard focus ring to other controls.
+- restores supporting text that sites fade using `opacity`;
+- improves placeholder legibility;
+- uses adaptive light/dark colours without halos or text shadows;
+- leaves buttons, inputs, icons, focus states, navigation, cards, menus, player
+  controls, and every other surface under the original site's control;
+- does not replace YouTube, GitHub, Atlassian, or other design-system variables.
+
+An earlier shared **surface consistency** feature tried to style generic
+`button`, `input`, navigation, card, and state selectors. That approach could
+override refined site-specific controls, creating grey search boxes and
+flattening button or icon presentation. It has been retired and is removed
+from every generated site. The original upstream CSS now remains authoritative
+for all surfaces and controls.
 
 ## Use it
 
@@ -39,9 +32,9 @@ The extension fetches a URL, so use the repository's public raw file:
 3. Agree to clear the existing styles when prompted, then click **Refetch
    latest styles** in the extension popup.
 
-You will now see **surface consistency** and **readability boost** in each site's
-feature list. Either can be disabled for an individual site without losing its
-upstream transparency theme.
+You will see **readability boost** in each site's feature list. It can be
+disabled for an individual site without losing the upstream transparency
+theme.
 
 The included GitHub Action checks upstream daily and commits a rebuilt
 `styles.json` only when something changed. You can also rebuild locally with:
@@ -58,54 +51,41 @@ To build from a downloaded or edited upstream file instead:
 node build.mjs /path/to/upstream-styles.json styles.json
 ```
 
-## Tune the appearance
+## Tune the text
 
-Shared values are at the top of `surface-consistency.css` and
-`readability.css`. The most useful controls are:
+The shared values at the top of `readability.css` are:
 
-- `--tzs-control`, `--tzs-panel`, `--tzs-hover`, and `--tzs-active` — component
-  translucency and interaction states;
-- `--tzs-strong` — fallback opacity for increased-contrast or
-  reduced-transparency preferences;
+- `--tzr-s` — secondary text strength;
+- `--tzr-m` — muted and placeholder text strength.
 
-- `--tzr-s` and `--tzr-m` — secondary and muted text strength;
-- `--tzr-f` — non-text-control keyboard focus colour;
-- `--tzr-g` and `--tzr-gs` — normal and reduced-transparency glass opacity;
-- the `blur(22px)` value — glass diffusion.
+After changing them, run the build and validation commands again.
 
-After changing the CSS, run the build and validation commands again.
+## Preservation audit
 
-## Coverage audit
+`audit.mjs` checks all 663 generated sites rather than sampling a few themes.
+It verifies that the readability layer does not inject generic surface rules,
+touch icons, replace site design tokens, or override native focus styling. The
+daily GitHub Action runs this audit after every upstream rebuild.
 
-`audit.mjs` checks every generated site rather than sampling a few themes. It
-verifies coverage for navigation, ordinary controls, interaction states,
-cards and panels, feedback surfaces, code blocks, tables, and readability. The
-daily GitHub Action runs this audit after rebuilding from upstream.
-
-No generic stylesheet can see inside cross-origin iframes or closed Shadow DOM,
-and websites can introduce new component conventions at any time. Those are
-the remaining cases that require a site-specific selector. For normal document
-content, the shared layer prevents a missed upstream selector from leaving a
-bright default button, input, card, toolbar, or table behind.
+No generic stylesheet can reliably infer the purpose or native visual language
+of every control on every website. Site-specific selectors from the upstream
+project are therefore the safe place for transparency changes to buttons,
+search fields, menus, media controls, and other interactive components.
 
 ## Design notes
 
-Transparent interfaces become unreliable when text and wallpaper are allowed
-to meet directly. Blur alone does not guarantee contrast: bright or detailed
-wallpaper can still sit behind grey text. This fork therefore uses two layers
-of defence—stronger semantic text colour and localized glass only for floating
-surfaces. It deliberately avoids text shadows because they can look abrasive
-against detailed wallpapers. Icons retain each website's original styling.
+Transparent interfaces become unreliable when text and wallpaper meet
+directly. Blur alone does not guarantee contrast, so this fork strengthens only
+recognisable supporting text. It deliberately avoids text shadows and global
+surface styling. Icons and interactive controls retain each website's original
+colouring and behaviour.
 
-For the calmest result, use a low-detail wallpaper with moderate luminance,
-keep blur around 18–28 px, and avoid pushing every large content panel below
-roughly 35–45% opacity. Transparency works best as depth, not as the absence of
-all surfaces.
+For the calmest result, use a low-detail wallpaper with moderate luminance.
+Transparency works best as depth, not as the absence of all surfaces.
 
 ## Upstream and licence
 
 The site themes come from
 [sameerasw/my-internet](https://github.com/sameerasw/my-internet) and retain the
-upstream MIT licence. `build.mjs`, `surface-consistency.css`,
-`readability.css`, the audit, and the automation in this folder are an additive
-compatibility layer.
+upstream MIT licence. `build.mjs`, `readability.css`, the preservation audit,
+and the automation in this folder form the additive text-readability layer.

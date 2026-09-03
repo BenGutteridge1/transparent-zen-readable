@@ -3,8 +3,8 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import {
+  LEGACY_SURFACE_FEATURE_NAME,
   READABILITY_FEATURE_NAME,
-  SURFACE_FEATURE_NAME,
 } from "./config.mjs";
 
 const scriptDir = path.dirname(fileURLToPath(import.meta.url));
@@ -27,20 +27,19 @@ for (const [site, features] of sites) {
     READABILITY_FEATURE_NAME,
     `${site}: readability must be the final feature`
   );
-  assert.equal(
-    featureNames.at(-2),
-    SURFACE_FEATURE_NAME,
-    `${site}: surface consistency must precede readability`
-  );
-  const surface = features[SURFACE_FEATURE_NAME];
-  const readable = features[READABILITY_FEATURE_NAME];
-  assert.ok(surface.includes("--tzs-control"), `${site}: missing surface tokens`);
-  assert.ok(readable.includes("--tzr-s"), `${site}: missing text tokens`);
   assert.ok(
-    readable.includes("--tzr-f") &&
-      !readable.includes("outline:2px solid AccentColor") &&
-      readable.includes('[role="searchbox"]'),
-    `${site}: search fields must not receive the global accent-colour box`
+    !(LEGACY_SURFACE_FEATURE_NAME in features),
+    `${site}: legacy global surface overrides must not be injected`
+  );
+
+  const readable = features[READABILITY_FEATURE_NAME];
+  assert.ok(
+    readable.includes("--tzr-s") && readable.includes("--tzr-m"),
+    `${site}: missing text tokens`
+  );
+  assert.ok(
+    readable.includes(':not(:where(button,[role="button"]'),
+    `${site}: interactive descendants are not protected`
   );
   assert.ok(
     !readable.includes("--tzr-h") &&
@@ -48,23 +47,35 @@ for (const [site, features] of sites) {
     `${site}: readability must not add text halos`
   );
   assert.ok(
-    !readable.includes("--tzr-i") && !readable.includes("svg[data-icon]"),
-    `${site}: readability must preserve the site's icon styling`
+    !/(?:--yt-|--color-fg|--fgColor|--ds-|--muted-foreground)\s*:/.test(
+      readable
+    ),
+    `${site}: readability must not replace site design tokens`
   );
   assert.ok(
-    surface.includes("!important") && readable.includes("!important"),
-    `${site}: missing cascade protection`
+    !/(?:svg|icon|filter:|fill:|stroke:)/i.test(readable),
+    `${site}: readability must not alter icon styling`
   );
   assert.ok(
-    !surface.includes("@-moz-document") &&
-      !readable.includes("@-moz-document"),
+    !/(?:background(?:-color)?|border-color|box-shadow|backdrop-filter|outline)\s*:/.test(
+      readable
+    ),
+    `${site}: readability must not alter controls or surfaces`
+  );
+  assert.ok(
+    !readable.includes(":focus"),
+    `${site}: readability must preserve native focus styling`
+  );
+  assert.ok(readable.includes("!important"), `${site}: missing cascade protection`);
+  assert.ok(
+    !readable.includes("@-moz-document"),
     `${site}: invalid injected wrapper`
   );
   assert.equal(
-    (surface.match(/{/g) || []).length,
-    (surface.match(/}/g) || []).length,
-    `${site}: unbalanced surface CSS`
+    (readable.match(/{/g) || []).length,
+    (readable.match(/}/g) || []).length,
+    `${site}: unbalanced readability CSS`
   );
 }
 
-console.log(`Validated ${sites.length} enhanced site themes.`);
+console.log(`Validated ${sites.length} text-only enhanced site themes.`);

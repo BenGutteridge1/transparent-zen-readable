@@ -3,8 +3,8 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import {
+  LEGACY_SURFACE_FEATURE_NAME,
   READABILITY_FEATURE_NAME,
-  SURFACE_FEATURE_NAME,
 } from "./config.mjs";
 
 const scriptDir = path.dirname(fileURLToPath(import.meta.url));
@@ -13,8 +13,8 @@ const styles = JSON.parse(
 );
 const sites = Object.entries(styles.website || {});
 const injectedNames = new Set([
+  LEGACY_SURFACE_FEATURE_NAME,
   READABILITY_FEATURE_NAME,
-  SURFACE_FEATURE_NAME,
 ]);
 
 const report = {
@@ -25,14 +25,11 @@ const report = {
     mentionsInteractiveControls: 0,
   },
   enhanced: {
-    surfaceConsistency: 0,
     readability: 0,
-    navigation: 0,
-    controls: 0,
-    stateStyles: 0,
-    cardsAndPanels: 0,
-    feedbackSurfaces: 0,
-    tables: 0,
+    nativeControlsPreserved: 0,
+    nativeIconsPreserved: 0,
+    nativeFocusPreserved: 0,
+    siteDesignTokensPreserved: 0,
   },
   exceptions: [],
 };
@@ -52,23 +49,20 @@ for (const [site, features] of sites) {
     report.upstream.mentionsInteractiveControls += 1;
   }
 
-  const surface = features[SURFACE_FEATURE_NAME] || "";
   const readable = features[READABILITY_FEATURE_NAME] || "";
   const checks = {
-    surfaceConsistency: surface.includes("--tzs-control"),
     readability: readable.includes("--tzr-s"),
-    navigation: surface.includes('[role="navigation"]'),
-    controls: /button.*input.*select.*textarea/s.test(surface),
-    stateStyles:
-      surface.includes(":hover") &&
-      surface.includes(":active") &&
-      surface.includes('[aria-selected="true"]'),
-    cardsAndPanels:
-      surface.includes('[class~="card"]') &&
-      surface.includes('[class~="panel"]'),
-    feedbackSurfaces:
-      surface.includes('[role="alert"]') && surface.includes('[class~="toast"]'),
-    tables: surface.includes('table:not([role="presentation"])'),
+    nativeControlsPreserved:
+      !(LEGACY_SURFACE_FEATURE_NAME in features) &&
+      !/(?:background(?:-color)?|border-color|box-shadow|backdrop-filter|outline)\s*:/.test(
+        readable
+      ),
+    nativeIconsPreserved: !/(?:svg|icon|filter:|fill:|stroke:)/i.test(readable),
+    nativeFocusPreserved: !readable.includes(":focus"),
+    siteDesignTokensPreserved:
+      !/(?:--yt-|--color-fg|--fgColor|--ds-|--muted-foreground)\s*:/.test(
+        readable
+      ),
   };
 
   for (const [category, covered] of Object.entries(checks)) {
@@ -77,9 +71,9 @@ for (const [site, features] of sites) {
   }
 }
 
-assert.equal(report.exceptions.length, 0, "Coverage exceptions were found");
+assert.equal(report.exceptions.length, 0, "Preservation exceptions were found");
 for (const count of Object.values(report.enhanced)) {
-  assert.equal(count, sites.length, "An enhanced coverage category is incomplete");
+  assert.equal(count, sites.length, "An enhanced preservation category is incomplete");
 }
 
 console.log(JSON.stringify(report, null, 2));
